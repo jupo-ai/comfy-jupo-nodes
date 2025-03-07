@@ -56,6 +56,8 @@ const extension = {
                     this.aspectH.value = temp;
                     this.updateResult();
                 };
+
+                this.updateResult();
                 
                 return r;
             };
