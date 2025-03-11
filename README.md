@@ -11,3 +11,7 @@
 ### TextBoxFont
 テキストボックス(multiline string widget)のフォントを変更する  
 user.cssを書き換えるの面倒だったので
+
+### Sampler & Scheduler Selector
+サンプラー、スケジューラーを選択。
+comboを返すのでpipe等に接続可能
