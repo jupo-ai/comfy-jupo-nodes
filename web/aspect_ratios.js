@@ -19,6 +19,7 @@ const extension = {
                 this.roundTo = this.widgets[1]
                 this.aspectW = this.widgets[2];
                 this.aspectH = this.widgets[3];
+                this.preset = this.widgets[5];
 
                 // アスペクト入れ替えボタン
                 this.switchButton = this.addWidget("button", "switch ⇅", null, null)
@@ -55,6 +56,21 @@ const extension = {
                     this.aspectW.value = this.aspectH.value;
                     this.aspectH.value = temp;
                     this.updateResult();
+                };
+                this.preset.callback = async (preset) => {
+                    const res = await api.fetchApi(_endpoint("aspect_ratios/preset"), {
+                        method: "POST", 
+                        body: JSON.stringify({preset: preset})
+                    });
+                    const ratios = await res.json();
+                    
+                    const w = ratios.aspectW;
+                    const h = ratios.aspectH;
+                    if ((w !== null) && (h !== null)) {
+                        this.aspectW.value = ratios.aspectW;
+                        this.aspectH.value = ratios.aspectH;
+                        this.updateResult();
+                    }
                 };
 
                 this.updateResult();
