@@ -12,7 +12,7 @@ class SamplerSelector:
             }
         }
     
-    RETURN_TYPES = (KSampler.SAMPLERS, )
+    RETURN_TYPES = (KSampler.SAMPLERS, KSampler.SCHEDULERS)
     RETURN_NAMES = ("sampler_name", "scheduler_name")
     CATEGORY = category
     FUNCTION = "execute"
