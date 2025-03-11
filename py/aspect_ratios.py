@@ -2,9 +2,29 @@ import json
 import math
 from aiohttp import web
 from comfy.comfy_types import IO
+from nodes import EmptyLatentImage
 from .fields import Field
 from .utils import log, category, endpoint
 
+
+ASPECT_RATIOS_PRESETS = [
+    "none", 
+    "[landscape] 3:1", 
+    "[landscape] 12:5", 
+    "[landscape] 7:4", 
+    "[landscape] 19:13", 
+    "[landscape] 3:2", 
+    "[landscape] 9:7", 
+    "[landscape] 4:3", 
+    "[square] 1:1", 
+    "[portrait] 3:4", 
+    "[portrait] 7:9", 
+    "[portrait] 2:3", 
+    "[portrait] 13:19", 
+    "[portrait] 4:7", 
+    "[portrait] 5:12", 
+    "[portrait] 1:3", 
+]
 
 class AspectRatios:
     @classmethod
@@ -12,21 +32,28 @@ class AspectRatios:
         return {
             "required": {
                 "base_resolution": Field.int(default=512, min=0), 
-                "round_to": Field.int(default=64, min=1), 
+                "round_to": Field.int(default=8, min=1), 
                 "aspectW": Field.int(default=1, min=1), 
                 "aspectH": Field.int(default=1, min=1), 
+                "clip_scale": Field.float(default=4, min=1), 
+                "preset": Field.combo(choices=ASPECT_RATIOS_PRESETS), 
+                "batch_size": Field.int(default=1, min=1), 
             }
         }
     
-    RETURN_TYPES = (IO.INT, IO.INT)
-    RETURN_NAMES = ("width", "height")
+    RETURN_TYPES = (IO.INT, IO.INT, IO.INT, IO.INT, IO.LATENT)
+    RETURN_NAMES = ("width", "height", "scaled_width", "scaled_height", "latent")
     CATEGORY = category
     FUNCTION = "execute"
 
-    def execute(self, base_resolution, aspectW, aspectH):
-        width, height = calc_resolution(base_resolution, aspectW, aspectH)
+    def execute(self, base_resolution, round_to, aspectW, aspectH, clip_scale, preset, batch_size):
+        width, height = calc_resolution(base_resolution, round_to, aspectW, aspectH)
+        scaled_width = int(width * clip_scale)
+        scaled_height = int(height * clip_scale)
         
-        return (width, height)
+        latent = EmptyLatentImage().generate(width, height, batch_size)[0]
+        
+        return (width, height, scaled_width, scaled_height, latent)
 
 
 
@@ -65,5 +92,24 @@ async def endpoint_calc_resolution(req: web.Request):
     body = json.dumps({
         "width": width, 
         "height": height
+    })
+    return web.Response(body=body)
+
+
+@endpoint.post("aspect_ratios/preset")
+async def endpoint_preset_on_changed(req: web.Request):
+    data = await req.json()
+
+    preset = data.get("preset")
+    
+    if preset == "none":
+        aspectW, aspectH = None, None
+    else:
+        ratio_part = preset.split("]")[-1].strip()
+        aspectW, aspectH = map(int, ratio_part.split(":"))
+    
+    body = json.dumps({
+        "aspectW": aspectW, 
+        "aspectH": aspectH
     })
     return web.Response(body=body)
