@@ -35,7 +35,6 @@ class AspectRatios:
                 "round_to": Field.int(default=8, min=1), 
                 "aspectW": Field.int(default=1, min=1), 
                 "aspectH": Field.int(default=1, min=1), 
-                "clip_scale": Field.float(default=4, min=1), 
                 "preset": Field.combo(choices=ASPECT_RATIOS_PRESETS), 
                 "batch_size": Field.int(default=1, min=1), 
             }
@@ -46,14 +45,12 @@ class AspectRatios:
     CATEGORY = category
     FUNCTION = "execute"
 
-    def execute(self, base_resolution, round_to, aspectW, aspectH, clip_scale, preset, batch_size):
+    def execute(self, base_resolution, round_to, aspectW, aspectH, preset, batch_size):
         width, height = calc_resolution(base_resolution, round_to, aspectW, aspectH)
-        scaled_width = int(width * clip_scale)
-        scaled_height = int(height * clip_scale)
         
         latent = EmptyLatentImage().generate(width, height, batch_size)[0]
         
-        return (width, height, scaled_width, scaled_height, latent)
+        return (width, height, latent)
 
 
 
