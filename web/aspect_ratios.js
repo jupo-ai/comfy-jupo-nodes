@@ -19,7 +19,7 @@ const extension = {
                 this.roundTo = this.widgets[1]
                 this.aspectW = this.widgets[2];
                 this.aspectH = this.widgets[3];
-                this.preset = this.widgets[5];
+                this.preset = this.widgets[4];
 
                 // アスペクト入れ替えボタン
                 this.switchButton = this.addWidget("button", "switch ⇅", null, null)
