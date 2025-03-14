@@ -40,7 +40,7 @@ class AspectRatios:
             }
         }
     
-    RETURN_TYPES = (IO.INT, IO.INT, IO.INT, IO.INT, IO.LATENT)
+    RETURN_TYPES = (IO.INT, IO.INT, IO.LATENT)
     RETURN_NAMES = ("width", "height", "scaled_width", "scaled_height", "latent")
     CATEGORY = category
     FUNCTION = "execute"
