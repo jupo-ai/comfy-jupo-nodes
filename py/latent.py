@@ -26,6 +26,8 @@ ASPECT_RATIOS_PRESETS = [
     "[portrait] 1:3", 
 ]
 
+
+
 class AspectRatios:
     @classmethod
     def INPUT_TYPES(cls):
@@ -52,8 +54,6 @@ class AspectRatios:
         
         return (width, height, latent)
 
-
-
 # javasript側で同じ計算をするため計算用関数を分離
 def calc_resolution(base, round_to, aspectW, aspectH):
     # 基準面積
@@ -72,8 +72,6 @@ def calc_resolution(base, round_to, aspectW, aspectH):
 
     return width, height
 
-
-
 # endpoint
 @endpoint.post("aspect_ratios/calc")
 async def endpoint_calc_resolution(req: web.Request):
@@ -91,7 +89,6 @@ async def endpoint_calc_resolution(req: web.Request):
         "height": height
     })
     return web.Response(body=body)
-
 
 @endpoint.post("aspect_ratios/preset")
 async def endpoint_preset_on_changed(req: web.Request):
@@ -142,7 +139,6 @@ class AspectRatiosShort:
         
         return (width, height, latent)
 
-
 def calc_resolution_short(short, step, aspectW, aspectH):
     if aspectW <= aspectH:
         width = short
@@ -152,8 +148,6 @@ def calc_resolution_short(short, step, aspectW, aspectH):
         width = round((height * aspectW / aspectH) / step) * step
 
     return width, height
-
-
 
 # endpoint
 @endpoint.post("aspect_ratios_short/calc")
