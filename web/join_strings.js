@@ -47,4 +47,5 @@ const extension = {
     }, 
 };
 
-app.registerExtension(extension);
+// 一旦削除(コピーできない？)
+// app.registerExtension(extension);

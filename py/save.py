@@ -4,7 +4,7 @@ import comfy.utils
 import folder_paths
 import comfy
 from comfy.model_patcher import ModelPatcher
-from comfy.sd import CLIP, VAE
+from comfy.sd import CLIP, VAE, save_checkpoint
 
 import torch
 from pathlib import Path
@@ -106,19 +106,16 @@ class SaveCheckpoint:
                 extra_keys["edm_vpred.sigma_min"] = torch.tensor(model_sampling.sigma_min).float()
     
         # save
-        clip_sd = clip.get_sd()
-        vae_sd = vae.get_sd()
-        sd = model.model.state_dict_for_saving(clip_sd, vae_sd)
-        sd.update(extra_keys)
-
-        for k in sd:
-            t = sd[k]
-            if not t.is_contiguous():
-                sd[k] = t.contiguous()
-        
         log(f"Saving ... {save_path}")
         save_path.parent.mkdir(parents=True, exist_ok=True)
-        comfy.utils.save_torch_file(sd, save_path, metadata)
+        save_checkpoint(
+            output_path=save_path, 
+            model=model, 
+            clip=clip, 
+            vae=vae, 
+            metadata=metadata, 
+            extra_keys=extra_keys
+        )
         log("Save completed!")
         return ()
 

@@ -16,7 +16,7 @@ const extension = {
                 const r = __onAdded?.apply(this, arguments);
 
                 this.base = this.widgets[0];
-                this.roundTo = this.widgets[1]
+                this.fixedSide = this.widgets[1]
                 this.aspectW = this.widgets[2];
                 this.aspectH = this.widgets[3];
                 this.preset = this.widgets[4];
@@ -48,7 +48,7 @@ const extension = {
 
                 // callback設定
                 this.base.callback = () => this.updateResult();
-                this.roundTo.callback = () => this.updateResult();
+                this.fixedSide.callback = () => this.updateResult();
                 this.aspectW.callback = () => this.updateResult();
                 this.aspectH.callback = () => this.updateResult();
                 this.switchButton.callback = () => {
@@ -85,7 +85,7 @@ const extension = {
                     method: "POST", 
                     body: JSON.stringify({
                         base: this.base.value, 
-                        roundTo: this.roundTo.value, 
+                        fixedSide: this.fixedSide.value, 
                         aspectW: this.aspectW.value, 
                         aspectH: this.aspectH.value
                     })
